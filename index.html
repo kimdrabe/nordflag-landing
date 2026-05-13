@@ -622,11 +622,8 @@
       renderContact(contact);
       renderFooter(footer);
 
-      const portfolioFiles = ['luebeck-porzellan', 'travemuende-tourismus', 'nordstart-ventures'];
-      const portfolios = await Promise.all(
-        portfolioFiles.map(f => loadJSON(`content/portfolios/${f}.json`))
-      );
-      renderPortfolios(portfolios);
+      const portfoliosData = await loadJSON('content/portfolios.json');
+      renderPortfolios(portfoliosData || []);
     }
 
     init();

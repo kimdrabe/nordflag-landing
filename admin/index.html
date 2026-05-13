@@ -329,7 +329,8 @@
       { key: 'stats', path: 'content/stats.json' },
       { key: 'process', path: 'content/process.json' },
       { key: 'contact', path: 'content/contact.json' },
-      { key: 'footer', path: 'content/footer.json' }
+      { key: 'footer', path: 'content/footer.json' },
+      { key: 'portfolios', path: 'content/portfolios.json' }
     ];
 
     async function loadAll() {
@@ -338,19 +339,8 @@
       try {
         for (const f of FILES) {
           const result = await loadJSON(f.path);
-          data[f.key] = result ? result.data : {};
+          data[f.key] = result ? result.data : (f.key === 'portfolios' ? [] : {});
           data[f.key + '_sha'] = result ? result.sha : null;
-        }
-
-        const dir = await loadDir('content/portfolios');
-        data.portfolios = [];
-        data.portfolios_sha = {};
-        for (const item of dir) {
-          const result = await loadJSON(`content/portfolios/${item.name}`);
-          if (result) {
-            data.portfolios.push({ ...result.data, _file: item.name });
-            data.portfolios_sha[item.name] = result.sha;
-          }
         }
 
         populateForm();
@@ -478,6 +468,13 @@
           description: collectVal('footer.description'),
           columns: data.footer ? data.footer.columns || [] : []
         };
+      }
+      if (key === 'portfolios') {
+        return (data.portfolios || []).filter(p => !p._deleted).map(p => ({
+          title: p.title,
+          description: p.description,
+          tags: p.tags || []
+        }));
       }
       return {};
     }
@@ -660,33 +657,14 @@
           sha: data[f.key + '_sha']
         }));
 
-        // Portfolios
-        const keepPortfolios = [];
-        for (let i = 0; i < data.portfolios.length; i++) {
-          const p = data.portfolios[i];
-          if (p._deleted) {
-            if (p._file && data.portfolios_sha[p._file]) {
-              await ghDelete(`content/portfolios/${p._file}`, data.portfolios_sha[p._file]);
-            }
-            continue;
-          }
-          keepPortfolios.push(p);
-          const fileName = p._file || (p.title ? p.title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '.json' : `project-${Date.now()}-${i}.json`);
-          const content = JSON.stringify({ title: p.title, description: p.description, tags: p.tags || [] }, null, 2);
-          updates.push({ path: `content/portfolios/${fileName}`, content, sha: data.portfolios_sha[fileName] || null, _file: fileName });
-        }
-        data.portfolios = keepPortfolios;
+        data.portfolios = (data.portfolios || []).filter(p => !p._deleted);
 
         for (const u of updates) {
           const fresh = await ghGet(u.path);
           const freshSha = fresh ? fresh.sha : null;
           const newSha = await ghPut(u.path, u.content, freshSha);
-          if (u._file) {
-            data.portfolios_sha[u._file] = newSha;
-          } else {
-            const key = u.path.replace('content/', '').replace('.json', '');
-            data[key + '_sha'] = newSha;
-          }
+          const key = u.path.replace('content/', '').replace('.json', '');
+          data[key + '_sha'] = newSha;
         }
 
         toast('Alle Änderungen gespeichert ✓');
