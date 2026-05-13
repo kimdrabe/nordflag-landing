@@ -138,6 +138,11 @@
           <div class="field"><label>CTA Primary</label><input name="hero.cta_primary" /></div>
           <div class="field"><label>CTA Secondary</label><input name="hero.cta_secondary" /></div>
         </div>
+        <div class="row">
+          <div class="field"><label>Hintergrund-Bild-URL</label><input name="hero.bg_image" placeholder="https://..." /></div>
+          <div class="field"><label>Hintergrund-Video-URL</label><input name="hero.bg_video" placeholder="https://..." /></div>
+        </div>
+        <div class="field"><label>E-Mail-Placeholder</label><input name="hero.email_placeholder" /></div>
         <div class="field">
           <label>Badges</label>
           <div class="badge-input" id="hero-badges"></div>
@@ -441,7 +446,10 @@
           cta_primary: collectVal('hero.cta_primary'),
           cta_secondary: collectVal('hero.cta_secondary'),
           badges: data.hero ? data.hero.badges || [] : [],
-          image: data.hero ? data.hero.image || '' : ''
+          image: data.hero ? data.hero.image || '' : '',
+          bg_image: data.hero ? data.hero.bg_image || '' : '',
+          bg_video: data.hero ? data.hero.bg_video || '' : '',
+          email_placeholder: data.hero ? data.hero.email_placeholder || 'ihre@email.de' : 'ihre@email.de'
         };
       }
       if (key === 'services') {

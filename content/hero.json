@@ -1,14 +1,12 @@
 {
-  "eyebrow": "Webagentur aus Niedersa",
+  "eyebrow": "Webagentur aus Lübeck",
   "headline": "Digitale<br />Marken<br />Gestalten",
   "lead": "Wir entwickeln Webauftritte, die im Gedächtnis bleiben — mit Strategie, Handwerk und Hanseatischer Präzision.",
   "cta_primary": "Projekt besprechen",
   "cta_secondary": "Arbeiten ansehen",
-  "badges": [
-    "Webdesign",
-    "Development",
-    "SEO",
-    "E-Commerce"
-  ],
-  "image": ""
+  "badges": ["Webdesign", "Development", "SEO", "E-Commerce"],
+  "image": "",
+  "bg_image": "",
+  "bg_video": "",
+  "email_placeholder": "ihre@email.de"
 }
