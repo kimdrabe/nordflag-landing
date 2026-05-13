@@ -1,5 +1,8 @@
 {
-  "title": "Lübeck Porzellan",
+  "title": "LÃ¼beck Porzellan",
   "description": "E-Commerce-Plattform mit Headless CMS",
-  "tags": ["Shop", "Next.js"]
+  "tags": [
+    "Shop",
+    "Next.js"
+  ]
 }
