@@ -2,16 +2,31 @@
   {
     "title": "Lübeck Porzellan",
     "description": "E-Commerce-Plattform mit Headless CMS",
-    "tags": ["Shop", "Next.js"]
+    "tags": [
+      "Shop",
+      "Next.js"
+    ],
+    "image": "l-beck-porzellan.png",
+    "link": "https://google.de"
   },
   {
     "title": "Travemünde Tourismus",
     "description": "Responsive Website + Buchungssystem",
-    "tags": ["Webdesign", "SEO"]
+    "tags": [
+      "Webdesign",
+      "SEO"
+    ],
+    "image": "",
+    "link": ""
   },
   {
     "title": "Nordstart Ventures",
     "description": "Corporate Identity & Marketing-Website",
-    "tags": ["Branding", "Webflow"]
+    "tags": [
+      "Branding",
+      "Webflow"
+    ],
+    "image": "",
+    "link": ""
   }
 ]
