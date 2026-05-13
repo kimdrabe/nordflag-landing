@@ -1,10 +1,22 @@
 {
   "eyebrow": "In Zahlen",
-  "title": "<strong>Ergebnisse,</strong> die für sich sprechen.",
+  "title": "<strong>Ergebnisse,</strong> die fÃ¼r sich sprechen.",
   "items": [
-    { "number": "12+", "label": "Jahre Erfahrung" },
-    { "number": "80+", "label": "umgesetzte Projekte" },
-    { "number": "98%", "label": "Kundenzufriedenheit" },
-    { "number": "15", "label": "Mitarbeiter in Lübeck" }
+    {
+      "number": "12+",
+      "label": "Jahre Erfahrung"
+    },
+    {
+      "number": "80+",
+      "label": "umgesetzte Projekte"
+    },
+    {
+      "number": "98%",
+      "label": "Kundenzufriedenheit"
+    },
+    {
+      "number": "15",
+      "label": "Mitarbeiter in LÃ¼beck"
+    }
   ]
 }
