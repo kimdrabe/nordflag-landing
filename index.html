@@ -279,6 +279,8 @@
       position: absolute; inset: 0;
       width: 100%; height: 100%; object-fit: cover;
     }
+    a .work-card { transition: transform 0.2s, box-shadow 0.2s; }
+    a:hover .work-card { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
     .work-card-body { padding: 16px; }
     .work-card-body h3 {
       font-size: 24px; font-weight: 700; line-height: 24px;
@@ -537,18 +539,11 @@
         <h2 class="section-title">${data.title}</h2>
         <p class="section-desc">${data.description}</p>
         <div class="work-grid">
-          ${items.map(p => `
-            <div class="work-card">
-              <div class="work-card-img" style="${p.image ? 'background:none;overflow:hidden;' : ''}">
-                ${p.image ? `<img src="images/${escAttr(p.image)}" alt="${escAttr(p.title)}" style="width:100%;height:100%;object-fit:cover;" />` : 'Projekt-Vorschau'}
-              </div>
-              <div class="work-card-body">
-                <h3>${p.title || ''}</h3>
-                <p>${p.description || ''}</p>
-                ${(p.tags || []).map(t => `<span class="badge-chip">${t}</span>`).join(' ')}
-              </div>
-            </div>
-          `).join('')}
+          ${items.map(p => {
+            const img = p.image ? `<div class="work-card-img" style="background:none;overflow:hidden;"><img src="images/${escAttr(p.image)}" alt="${escAttr(p.title)}" /></div>` : `<div class="work-card-img">Projekt-Vorschau</div>`;
+            const body = `<div class="work-card-body"><h3>${escAttr(p.title)}</h3><p>${p.description || ''}</p>${(p.tags || []).map(t => `<span class="badge-chip">${escAttr(t)}</span>`).join(' ')}</div>`;
+            return p.link ? `<a href="${escAttr(p.link)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;"><div class="work-card">${img}${body}</div></a>` : `<div class="work-card">${img}${body}</div>`;
+          }).join('')}
         </div>`;
       document.getElementById('portfolios-content').innerHTML = html;
     }

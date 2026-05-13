@@ -474,7 +474,8 @@
           title: p.title,
           description: p.description,
           tags: p.tags || [],
-          image: p.image || ''
+          image: p.image || '',
+          link: p.link || ''
         }));
       }
       return {};
@@ -592,6 +593,7 @@
             <label>Tags (kommagetrennt)</label>
             <input value="${esc((item.tags || []).join(', '))}" onchange="editPortfolioTags(${i},this.value)" />
           </div>
+          <div class="field"><label>Link (z.B. https://example.com)</label><input value="${esc(item.link || '')}" onchange="editPortfolio(${i},'link',this.value)" placeholder="https://..." /></div>
           <div class="field">
             <label>Bild (JPG/PNG, max 2 MB)</label>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -611,7 +613,7 @@
     }
 
     function addPortfolio() {
-      data.portfolios.push({ title: '', description: '', tags: [], image: '' });
+      data.portfolios.push({ title: '', description: '', tags: [], image: '', link: '' });
       renderPortfolios();
     }
 
