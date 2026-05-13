@@ -94,7 +94,16 @@
         radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,85,164,0.06) 0%, transparent 60%);
       pointer-events: none;
     }
-    .hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .hero-inner {
+      position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 64px;
+    }
+    .hero-text { flex: 1; min-width: 0; }
+    .hero-image-wrap { flex: 0 0 40%; max-width: 440px; }
+    .hero-image-wrap img {
+      width: 100%; height: auto; border-radius: 6px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
     .hero-eyebrow {
       font-size: 16px; font-weight: 800; line-height: 24px;
       text-transform: uppercase; letter-spacing: 1px;
@@ -375,6 +384,8 @@
       #nav-toggle:checked ~ .nav-links .nav-cta { text-align: center; }
       .hero { padding: 120px 20px 80px; }
       .hero h1 { max-width: 100%; }
+      .hero-inner { flex-direction: column; gap: 40px; }
+      .hero-image-wrap { flex: none; max-width: 100%; width: 100%; }
       .band { padding: 64px 20px; }
       .services-grid { grid-template-columns: 1fr; }
       .work-grid { grid-template-columns: 1fr; }
@@ -464,16 +475,22 @@
 
     function renderHero(data) {
       if (!data) return;
+      const hasImage = data.image && data.image !== 'none';
       const html = `
-        <p class="hero-eyebrow">${data.eyebrow || ''}</p>
-        <h1>${data.headline || ''}</h1>
-        <p class="hero-lead">${data.lead || ''}</p>
-        <div class="hero-actions">
-          <a href="#kontakt" class="btn-primary">${data.cta_primary || ''}</a>
-          <a href="#arbeiten" class="btn-outline-light">${data.cta_secondary || ''}</a>
-        </div>
-        <div style="margin-top: 48px; display: flex; gap: 8px; flex-wrap: wrap;">
-          ${(data.badges || []).map(b => `<span class="badge-chip">${b}</span>`).join('')}
+        <div class="hero-inner">
+          <div class="hero-text">
+            <p class="hero-eyebrow">${data.eyebrow || ''}</p>
+            <h1>${data.headline || ''}</h1>
+            <p class="hero-lead">${data.lead || ''}</p>
+            <div class="hero-actions">
+              <a href="#kontakt" class="btn-primary">${data.cta_primary || ''}</a>
+              <a href="#arbeiten" class="btn-outline-light">${data.cta_secondary || ''}</a>
+            </div>
+            <div style="margin-top: 48px; display: flex; gap: 8px; flex-wrap: wrap;">
+              ${(data.badges || []).map(b => `<span class="badge-chip">${b}</span>`).join('')}
+            </div>
+          </div>
+          ${hasImage ? `<div class="hero-image-wrap"><img src="images/${escAttr(data.image)}" alt="Hero" /></div>` : ''}
         </div>`;
       document.getElementById('hero-content').innerHTML = html;
     }

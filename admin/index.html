@@ -146,6 +146,13 @@
             <button type="button" class="btn btn-outline btn-sm" onclick="addBadge('hero')">+</button>
           </div>
         </div>
+        <div class="field">
+          <label>Hero-Bild (rechte Seite, JPG/PNG/WebP, max 2 MB)</label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadHeroImage(this)" style="font-size:14px;" />
+            <span style="font-size:13px;color:var(--body);" id="hero-img-status">Kein Bild</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -371,6 +378,8 @@
       setVal('hero.cta_primary');
       setVal('hero.cta_secondary');
       renderBadges('hero');
+      const heroImg = data.hero && data.hero.image;
+      if (heroImg) document.getElementById('hero-img-status').textContent = heroImg;
 
       // Services
       setVal('services.eyebrow');
@@ -425,7 +434,8 @@
           lead: collectVal('hero.lead'),
           cta_primary: collectVal('hero.cta_primary'),
           cta_secondary: collectVal('hero.cta_secondary'),
-          badges: data.hero ? data.hero.badges || [] : []
+          badges: data.hero ? data.hero.badges || [] : [],
+          image: data.hero ? data.hero.image || '' : ''
         };
       }
       if (key === 'services') {
@@ -620,6 +630,41 @@
     function removePortfolio(i) {
       data.portfolios[i]._deleted = true;
       renderPortfolios();
+    }
+
+    async function uploadHeroImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { toast('Bild zu groß (max 2 MB)'); input.value = ''; return; }
+      const statusEl = document.getElementById('hero-img-status');
+      statusEl.textContent = 'Lade hoch ...';
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/, '');
+        const safeName = 'hero.' + ext;
+        const path = 'images/' + safeName;
+        const current = await ghGet(path);
+        const body = { message: 'Upload ' + path, content: base64, branch: BRANCH };
+        if (current) body.sha = current.sha;
+        const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+          method: 'PUT',
+          headers: { Authorization: 'token ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) { let m = 'Fehler'; try { m = (await res.json()).message; } catch {} throw new Error(m); }
+        if (!data.hero) data.hero = {};
+        data.hero.image = safeName;
+        statusEl.textContent = safeName;
+        toast('Hero-Bild hochgeladen ✓');
+      } catch (e) {
+        statusEl.textContent = 'Fehler: ' + e.message;
+        input.value = '';
+      }
     }
 
     async function uploadPortfolioImage(i, input) {
