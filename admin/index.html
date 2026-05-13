@@ -233,6 +233,11 @@
   <div id="toast" class="toast"></div>
 
   <script>
+    window.onerror = function(msg, url, line) {
+      const el = document.getElementById('toast');
+      if (el) { el.textContent = 'Fehler: ' + msg + ' (Zeile ' + line + ')'; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 6000); }
+    };
+
     const REPO = 'kimdrabe/nordflag-landing';
     const BRANCH = 'main';
     let token = localStorage.getItem('nordflag_token') || '';
