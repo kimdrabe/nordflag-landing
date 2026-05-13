@@ -4,7 +4,6 @@ backend:
   branch: main
   base_url: https://oauth.decap.org
 
-local_backend: true
 publish_mode: editorial_workflow
 media_folder: "images"
 public_folder: "/images"
