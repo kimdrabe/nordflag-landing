@@ -1,15 +1,5 @@
 [
   {
-    "title": "Lübeck Porzellan",
-    "description": "E-Commerce-Plattform mit Headless CMS",
-    "tags": [
-      "Shop",
-      "Next.js"
-    ],
-    "image": "l-beck-porzellan.webp",
-    "link": ""
-  },
-  {
     "title": "Travemünde Tourismus",
     "description": "Responsive Website + Buchungssystem",
     "tags": [
