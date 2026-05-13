@@ -1,0 +1,31 @@
+{
+  "description": "Design- und Entwicklungsstudio aus Lübeck. Wir gestalten digitale Markenerlebnisse mit hanseatischer Präzision.",
+  "columns": [
+    {
+      "heading": "Leistungen",
+      "links": [
+        { "label": "Webdesign", "url": "#" },
+        { "label": "Entwicklung", "url": "#" },
+        { "label": "SEO", "url": "#" },
+        { "label": "E-Commerce", "url": "#" }
+      ]
+    },
+    {
+      "heading": "Agentur",
+      "links": [
+        { "label": "Über uns", "url": "#" },
+        { "label": "Team", "url": "#" },
+        { "label": "Karriere", "url": "#" },
+        { "label": "Blog", "url": "#" }
+      ]
+    },
+    {
+      "heading": "Rechtliches",
+      "links": [
+        { "label": "Impressum", "url": "#" },
+        { "label": "Datenschutz", "url": "#" },
+        { "label": "AGB", "url": "#" }
+      ]
+    }
+  ]
+}

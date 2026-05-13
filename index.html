@@ -378,6 +378,21 @@
     @media (max-width: 480px) {
       .process-grid { grid-template-columns: 1fr; }
     }
+
+    .cms-badge {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background: var(--ink); color: var(--on-dark);
+      padding: 12px 20px; border-radius: 60px; text-decoration: none;
+      font-size: 14px; font-weight: 700; line-height: 21px;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2); transition: opacity 0.2s;
+    }
+    .cms-badge:hover { opacity: 0.85; }
+    .cms-badge-orb {
+      width: 24px; height: 24px; background: var(--primary);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -401,237 +416,221 @@
   </nav>
 
   <section class="hero" id="start">
-    <div class="hero-content">
-      <p class="hero-eyebrow">Webagentur aus Lübeck</p>
-      <h1>Digitale<br />Marken<br />Gestalten</h1>
-      <p class="hero-lead">
-        Wir entwickeln Webauftritte, die im Gedächtnis bleiben &mdash;
-        mit Strategie, Handwerk und Hanseatischer Präzision.
-      </p>
-      <div class="hero-actions">
-        <a href="#kontakt" class="btn-primary">Projekt besprechen</a>
-        <a href="#arbeiten" class="btn-outline-light">Arbeiten ansehen</a>
-      </div>
-      <div style="margin-top: 48px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <span class="badge-chip">Webdesign</span>
-        <span class="badge-chip">Development</span>
-        <span class="badge-chip">SEO</span>
-        <span class="badge-chip">E-Commerce</span>
-      </div>
-    </div>
+    <div class="hero-content" id="hero-content"></div>
   </section>
 
   <section class="band band-light" id="leistungen">
-    <div class="band-content">
-      <p class="section-eyebrow">Unsere Expertise</p>
-      <h2 class="section-title">Von der Idee zur <strong>digitalen<br />Präsenz</strong> &mdash; aus einer Hand.</h2>
-      <p class="section-desc">
-        Ob Corporate Website, Online-Shop oder Web-App &mdash; wir bauen
-        Lösungen, die Ihre Marke nach vorne bringen.
-      </p>
-
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-card-icon">W</div>
-          <h3>Webdesign</h3>
-          <p>Ästhetische, konversionsstarke Layouts mit Fokus auf Markenidentität und Nutzerführung.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-card-icon">&lt;/&gt;</div>
-          <h3>Frontend &amp; Backend</h3>
-          <p>Moderne Tech-Stacks &amp; saubere Architektur f&uuml;r performante und skalierbare Webanwendungen.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-card-icon">S</div>
-          <h3>SEO &amp; Performance</h3>
-          <p>Sichtbarkeit aufbauen, Ladezeiten optimieren &mdash; damit Sie bei Google ganz vorne landen.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-card-icon">E</div>
-          <h3>E-Commerce</h3>
-          <p>Shop-Systeme, die verkaufen. Von der Produktseite bis zum bezahlten Checkout.</p>
-        </div>
-      </div>
-    </div>
+    <div class="band-content" id="services-content"></div>
   </section>
 
   <section class="band band-soft">
-    <div class="band-content" style="text-align: center;">
-      <div class="speechmark" style="margin: 0 auto 32px;">"</div>
-      <p class="section-eyebrow">In Zahlen</p>
-      <h2 class="section-title" style="max-width: 600px; margin-left: auto; margin-right: auto;">
-        <strong>Ergebnisse,</strong> die für sich sprechen.
-      </h2>
-
-      <div class="stats-row">
-        <div class="stat-item">
-          <div class="stat-number"><strong>12+</strong></div>
-          <div class="stat-label">Jahre Erfahrung</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number"><strong>80+</strong></div>
-          <div class="stat-label">umgesetzte Projekte</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number"><strong>98&thinsp;%</strong></div>
-          <div class="stat-label">Kundenzufriedenheit</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number"><strong>15</strong></div>
-          <div class="stat-label">Mitarbeiter in Lübeck</div>
-        </div>
-      </div>
-    </div>
+    <div class="band-content" id="stats-content" style="text-align: center;"></div>
   </section>
 
   <section class="band band-light" id="prozess">
-    <div class="band-content">
-      <p class="section-eyebrow">So arbeiten wir</p>
-      <h2 class="section-title">Vom <strong>Briefing</strong> bis zum<br /><strong>Go-Live</strong> &mdash; unser Prozess.</h2>
-      <p class="section-desc">
-        Klare Schritte, transparente Kommunikation, kein Chaos.
-      </p>
-
-      <div class="process-grid">
-        <div class="process-step">
-          <div class="process-number">01</div>
-          <h3>Briefing &amp; Analyse</h3>
-          <p>Wir verstehen Ihr Unternehmen, Ihre Ziele und Ihre Zielgruppe.</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">02</div>
-          <h3>Konzept &amp; Design</h3>
-          <p>Wireframes, Designs und ein stimmiges Markenerlebnis.</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">03</div>
-          <h3>Entwicklung</h3>
-          <p>Sauberer Code, moderne Frameworks, iterative Sprints.</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">04</div>
-          <h3>Launch &amp; Support</h3>
-          <p>Go-Live, Monitoring und langfristige Betreuung.</p>
-        </div>
-      </div>
-    </div>
+    <div class="band-content" id="process-content"></div>
   </section>
 
   <section class="band band-soft" id="arbeiten">
-    <div class="band-content">
-      <p class="section-eyebrow">Aus unserem Portfolio</p>
-      <h2 class="section-title">Projekte, auf die wir <strong>stolz</strong> sind.</h2>
-      <p class="section-desc">Eine kleine Auswahl unserer Lieblingsprojekte aus den letzten Jahren.</p>
-
-      <div class="work-grid">
-        <div class="work-card">
-          <div class="work-card-img">Projekt-Vorschau</div>
-          <div class="work-card-body">
-            <h3>Lübeck Porzellan</h3>
-            <p>E-Commerce-Plattform mit Headless CMS</p>
-            <span class="badge-chip">Shop</span>
-            <span class="badge-chip">Next.js</span>
-          </div>
-        </div>
-        <div class="work-card">
-          <div class="work-card-img">Projekt-Vorschau</div>
-          <div class="work-card-body">
-            <h3>Travemünde Tourismus</h3>
-            <p>Responsive Website + Buchungssystem</p>
-            <span class="badge-chip">Webdesign</span>
-            <span class="badge-chip">SEO</span>
-          </div>
-        </div>
-        <div class="work-card">
-          <div class="work-card-img">Projekt-Vorschau</div>
-          <div class="work-card-body">
-            <h3>Nordstart Ventures</h3>
-            <p>Corporate Identity &amp; Marketing-Website</p>
-            <span class="badge-chip">Branding</span>
-            <span class="badge-chip">Webflow</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="band-content" id="portfolios-content"></div>
   </section>
 
   <section class="band band-light" id="kontakt">
-    <div class="band-content">
-      <p class="section-eyebrow">Kontakt</p>
-      <h2 class="section-title">Lassen Sie uns <strong>Ihr Projekt</strong><br />besprechen.</h2>
-      <p class="section-desc">
-        Rufen Sie an, schreiben Sie uns oder kommen Sie direkt vorbei &mdash;
-        wir freuen uns auf Sie.
-      </p>
-
-      <div class="contact-grid">
-        <div class="contact-info">
-          <div class="speechmark" style="margin-bottom: 24px;">"</div>
-          <h3>Nordflag Webagentur</h3>
-          <p>Musterstraße 42<br />23552 Lübeck</p>
-          <p style="margin-top: 16px;">
-            <a href="tel:+494511234567">+49 451 1234567</a><br />
-            <a href="mailto:hallo@nordflag.de">hallo@nordflag.de</a>
-          </p>
-          <p style="margin-top: 24px; font-size: 14px; font-weight: 400; line-height: 16px; color: var(--body);">
-            Mo &ndash; Fr: 9:00 &ndash; 18:00 Uhr<br />
-            Persönliche Termine nach Vereinbarung
-          </p>
-        </div>
-        <form class="contact-form">
-          <input type="text" placeholder="Name" required />
-          <input type="email" placeholder="E-Mail" required />
-          <input type="text" placeholder="Unternehmen (optional)" />
-          <textarea placeholder="Ihr Projekt &mdash; erzählen Sie uns davon ..." required></textarea>
-          <button type="submit" class="btn-primary" style="align-self: flex-start; border: none; cursor: pointer;">
-            Nachricht senden
-          </button>
-        </form>
-      </div>
-    </div>
+    <div class="band-content" id="contact-content"></div>
   </section>
 
-  <footer class="footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="#start" class="nav-logo" style="text-decoration: none;">
-          <span class="nav-logo-orb">NF</span>
-          <span class="nav-logo-text">Nordflag</span>
-        </a>
-        <p>Design- und Entwicklungsstudio aus Lübeck. Wir gestalten digitale Markenerlebnisse mit hanseatischer Präzision.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Leistungen</h4>
-        <ul>
-          <li><a href="#">Webdesign</a></li>
-          <li><a href="#">Entwicklung</a></li>
-          <li><a href="#">SEO</a></li>
-          <li><a href="#">E-Commerce</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Agentur</h4>
-        <ul>
-          <li><a href="#">Über uns</a></li>
-          <li><a href="#">Team</a></li>
-          <li><a href="#">Karriere</a></li>
-          <li><a href="#">Blog</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Rechtliches</h4>
-        <ul>
-          <li><a href="#">Impressum</a></li>
-          <li><a href="#">Datenschutz</a></li>
-          <li><a href="#">AGB</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 Nordflag Webagentur Lübeck</p>
-      <p>Mit ❤️ aus der Hansestadt</p>
-    </div>
-  </footer>
+  <footer class="footer" id="footer-content"></footer>
+
+  <a href="/admin/" class="cms-badge" target="_blank">
+    <span class="cms-badge-orb">C</span>
+    Inhalt bearbeiten
+  </a>
+
+  <script>
+    async function loadJSON(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch { return null; }
+    }
+
+    function renderHero(data) {
+      if (!data) return;
+      const html = `
+        <p class="hero-eyebrow">${data.eyebrow || ''}</p>
+        <h1>${data.headline || ''}</h1>
+        <p class="hero-lead">${data.lead || ''}</p>
+        <div class="hero-actions">
+          <a href="#kontakt" class="btn-primary">${data.cta_primary || ''}</a>
+          <a href="#arbeiten" class="btn-outline-light">${data.cta_secondary || ''}</a>
+        </div>
+        <div style="margin-top: 48px; display: flex; gap: 8px; flex-wrap: wrap;">
+          ${(data.badges || []).map(b => `<span class="badge-chip">${b}</span>`).join('')}
+        </div>`;
+      document.getElementById('hero-content').innerHTML = html;
+    }
+
+    function renderServices(data) {
+      if (!data) return;
+      const html = `
+        <p class="section-eyebrow">${data.eyebrow || ''}</p>
+        <h2 class="section-title">${data.title || ''}</h2>
+        <p class="section-desc">${data.description || ''}</p>
+        <div class="services-grid">
+          ${(data.items || []).map(item => `
+            <div class="service-card">
+              <div class="service-card-icon">${item.icon || ''}</div>
+              <h3>${item.title || ''}</h3>
+              <p>${item.description || ''}</p>
+            </div>
+          `).join('')}
+        </div>`;
+      document.getElementById('services-content').innerHTML = html;
+    }
+
+    function renderStats(data) {
+      if (!data) return;
+      const html = `
+        <div class="speechmark" style="margin: 0 auto 32px;">"</div>
+        <p class="section-eyebrow">${data.eyebrow || ''}</p>
+        <h2 class="section-title" style="max-width: 600px; margin-left: auto; margin-right: auto;">${data.title || ''}</h2>
+        <div class="stats-row">
+          ${(data.items || []).map(item => `
+            <div class="stat-item">
+              <div class="stat-number"><strong>${item.number || ''}</strong></div>
+              <div class="stat-label">${item.label || ''}</div>
+            </div>
+          `).join('')}
+        </div>`;
+      document.getElementById('stats-content').innerHTML = html;
+    }
+
+    function renderProcess(data) {
+      if (!data) return;
+      const html = `
+        <p class="section-eyebrow">${data.eyebrow || ''}</p>
+        <h2 class="section-title">${data.title || ''}</h2>
+        <p class="section-desc">${data.description || ''}</p>
+        <div class="process-grid">
+          ${(data.steps || []).map((step, i) => `
+            <div class="process-step">
+              <div class="process-number">${String(i + 1).padStart(2, '0')}</div>
+              <h3>${step.title || ''}</h3>
+              <p>${step.description || ''}</p>
+            </div>
+          `).join('')}
+        </div>`;
+      document.getElementById('process-content').innerHTML = html;
+    }
+
+    function renderPortfolios(entries) {
+      const data = { eyebrow: 'Aus unserem Portfolio', title: 'Projekte, auf die wir <strong>stolz</strong> sind.', description: 'Eine kleine Auswahl unserer Lieblingsprojekte aus den letzten Jahren.' };
+      const items = (entries || []).filter(Boolean);
+      const html = `
+        <p class="section-eyebrow">${data.eyebrow}</p>
+        <h2 class="section-title">${data.title}</h2>
+        <p class="section-desc">${data.description}</p>
+        <div class="work-grid">
+          ${items.map(p => `
+            <div class="work-card">
+              <div class="work-card-img">Projekt-Vorschau</div>
+              <div class="work-card-body">
+                <h3>${p.title || ''}</h3>
+                <p>${p.description || ''}</p>
+                ${(p.tags || []).map(t => `<span class="badge-chip">${t}</span>`).join(' ')}
+              </div>
+            </div>
+          `).join('')}
+        </div>`;
+      document.getElementById('portfolios-content').innerHTML = html;
+    }
+
+    function renderContact(data) {
+      if (!data) return;
+      const html = `
+        <p class="section-eyebrow">${data.eyebrow || ''}</p>
+        <h2 class="section-title">${data.title || ''}</h2>
+        <p class="section-desc">${data.description || ''}</p>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <div class="speechmark" style="margin-bottom: 24px;">"</div>
+            <h3>${data.company || ''}</h3>
+            <p>${data.address || ''}</p>
+            <p style="margin-top: 16px;">
+              <a href="tel:${(data.phone || '').replace(/[^+\d]/g, '')}">${data.phone || ''}</a><br />
+              <a href="mailto:${data.email || ''}">${data.email || ''}</a>
+            </p>
+            <p style="margin-top: 24px; font-size: 14px; font-weight: 400; line-height: 16px; color: var(--body);">
+              ${data.hours || ''}
+            </p>
+          </div>
+          <form class="contact-form">
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="E-Mail" required />
+            <input type="text" placeholder="Unternehmen (optional)" />
+            <textarea placeholder="Ihr Projekt — erzählen Sie uns davon ..." required></textarea>
+            <button type="submit" class="btn-primary" style="align-self: flex-start; border: none; cursor: pointer;">Nachricht senden</button>
+          </form>
+        </div>`;
+      document.getElementById('contact-content').innerHTML = html;
+    }
+
+    function renderFooter(data) {
+      if (!data) return;
+      const html = `
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="#start" class="nav-logo" style="text-decoration: none;">
+              <span class="nav-logo-orb">NF</span>
+              <span class="nav-logo-text">Nordflag</span>
+            </a>
+            <p>${data.description || ''}</p>
+          </div>
+          ${(data.columns || []).map(col => `
+            <div class="footer-col">
+              <h4>${col.heading || ''}</h4>
+              <ul>
+                ${(col.links || []).map(link => `
+                  <li><a href="${link.url || '#'}">${link.label || ''}</a></li>
+                `).join('')}
+              </ul>
+            </div>
+          `).join('')}
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; ${new Date().getFullYear()} Nordflag Webagentur Lübeck</p>
+          <p>Mit ❤️ aus der Hansestadt</p>
+        </div>`;
+      document.getElementById('footer-content').innerHTML = html;
+    }
+
+    async function init() {
+      const [hero, services, stats, process, contact, footer] = await Promise.all([
+        loadJSON('content/hero.json'),
+        loadJSON('content/services.json'),
+        loadJSON('content/stats.json'),
+        loadJSON('content/process.json'),
+        loadJSON('content/contact.json'),
+        loadJSON('content/footer.json')
+      ]);
+
+      renderHero(hero);
+      renderServices(services);
+      renderStats(stats);
+      renderProcess(process);
+      renderContact(contact);
+      renderFooter(footer);
+
+      const portfolioFiles = ['luebeck-porzellan', 'travemuende-tourismus', 'nordstart-ventures'];
+      const portfolios = await Promise.all(
+        portfolioFiles.map(f => loadJSON(`content/portfolios/${f}.json`))
+      );
+      renderPortfolios(portfolios);
+    }
+
+    init();
+  </script>
 
 </body>
 </html>

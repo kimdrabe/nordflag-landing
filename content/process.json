@@ -1,0 +1,23 @@
+{
+  "eyebrow": "So arbeiten wir",
+  "title": "Vom <strong>Briefing</strong> bis zum<br /><strong>Go-Live</strong> — unser Prozess.",
+  "description": "Klare Schritte, transparente Kommunikation, kein Chaos.",
+  "steps": [
+    {
+      "title": "Briefing & Analyse",
+      "description": "Wir verstehen Ihr Unternehmen, Ihre Ziele und Ihre Zielgruppe."
+    },
+    {
+      "title": "Konzept & Design",
+      "description": "Wireframes, Designs und ein stimmiges Markenerlebnis."
+    },
+    {
+      "title": "Entwicklung",
+      "description": "Sauberer Code, moderne Frameworks, iterative Sprints."
+    },
+    {
+      "title": "Launch & Support",
+      "description": "Go-Live, Monitoring und langfristige Betreuung."
+    }
+  ]
+}
