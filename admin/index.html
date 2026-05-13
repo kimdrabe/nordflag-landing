@@ -4,9 +4,707 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nordflag CMS</title>
-  <link href="https://unpkg.com/decap-cms@^3/dist/decap-cms.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Inter, 'Helvetica Neue', Arial, sans-serif;
+      background: #f2f2f2; color: #25282b; padding: 32px;
+      -webkit-font-smoothing: antialiased;
+    }
+    :root {
+      --primary: #0055a4; --ink: #25282b; --body: #7e7e7e;
+      --canvas: #ffffff; --canvas-soft: #f2f2f2;
+    }
+    h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
+    .sub { color: var(--body); font-size: 16px; margin-bottom: 32px; }
+    .card {
+      background: var(--canvas); border-radius: 6px; padding: 24px; margin-bottom: 16px;
+    }
+    .card h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--body); text-transform: uppercase; letter-spacing: 0.3px; }
+    .field input, .field textarea {
+      width: 100%; padding: 10px 14px; border: 1px solid #d0d0d0; border-radius: 6px;
+      font-family: Inter, sans-serif; font-size: 15px; outline: none;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--primary); }
+    .field textarea { min-height: 70px; resize: vertical; }
+    .field textarea.tall { min-height: 120px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .badge-input { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge-input input { width: auto; flex: 1; min-width: 100px; }
+    .badge-tag {
+      background: #e8e8e8; border-radius: 32px; padding: 4px 12px;
+      font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .badge-tag button {
+      background: none; border: none; cursor: pointer; font-size: 16px; color: #999; padding: 0;
+      line-height: 1;
+    }
+    .badge-tag button:hover { color: #e60000; }
+    .item-card {
+      background: var(--canvas-soft); border-radius: 6px; padding: 16px; margin-bottom: 12px;
+    }
+    .item-card .row { grid-template-columns: 1fr 1fr; }
+    .item-card .actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn {
+      padding: 10px 24px; border-radius: 60px; font-size: 15px; font-weight: 600;
+      border: none; cursor: pointer; font-family: Inter, sans-serif;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--ink); color: var(--ink); }
+    .btn-danger { background: #e60000; color: #fff; }
+    .btn-sm { padding: 6px 16px; font-size: 13px; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #25282b; color: #fff; padding: 14px 24px; border-radius: 60px;
+      font-size: 14px; font-weight: 600; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    .loading { text-align: center; padding: 60px; color: var(--body); }
+    .saved-msg { color: #00a86b; font-size: 13px; font-weight: 600; display: none; }
+    .tab-bar { display: flex; gap: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab {
+      padding: 8px 20px; border-radius: 60px; font-size: 14px; font-weight: 600;
+      background: #e0e0e0; cursor: pointer; border: none; font-family: Inter, sans-serif;
+      transition: background 0.2s;
+    }
+    .tab.active { background: var(--primary); color: #fff; }
+    .tab:hover:not(.active) { background: #d0d0d0; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .header-bar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .token-bar {
+      background: #fffbe6; border: 1px solid #f0d060; border-radius: 6px;
+      padding: 12px 16px; font-size: 14px; margin-bottom: 24px;
+    }
+    .token-bar input { width: 100%; margin-top: 8px; }
+    .token-bar .btn { margin-top: 8px; }
+    .inline-group { display: flex; gap: 8px; align-items: center; }
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+
+  <div class="header-bar">
+    <div>
+      <h1>Nordflag CMS</h1>
+      <p class="sub">Bearbeite alle Inhalte der Landingpage</p>
+    </div>
+    <div class="inline-group">
+      <span id="status-text" style="font-size:14px;color:var(--body);">Nicht verbunden</span>
+      <button class="btn btn-primary" onclick="saveAll()">Alles speichern</button>
+    </div>
+  </div>
+
+  <div class="token-bar" id="token-bar">
+    <strong>GitHub Token erforderlich</strong>
+    <p style="font-size:13px;margin-top:4px;">Gib dein persönliches GitHub-Token ein, um Änderungen zu speichern. Das Token wird nur lokal im Browser gespeichert.</p>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+      <input type="password" id="token-input" placeholder="ghp_..." style="flex:1;min-width:200px;padding:10px 14px;border:1px solid #d0d0d0;border-radius:6px;font-family:Inter,sans-serif;font-size:14px;" />
+      <button class="btn btn-primary" onclick="saveToken()">Token speichern</button>
+    </div>
+  </div>
+
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab active" data-tab="tab-hero">Hero</button>
+    <button class="tab" data-tab="tab-services">Leistungen</button>
+    <button class="tab" data-tab="tab-stats">Zahlen</button>
+    <button class="tab" data-tab="tab-process">Prozess</button>
+    <button class="tab" data-tab="tab-portfolios">Portfolio</button>
+    <button class="tab" data-tab="tab-contact">Kontakt</button>
+    <button class="tab" data-tab="tab-footer">Footer</button>
+  </div>
+
+  <div id="loading" class="loading">Lade Inhalte ...</div>
+
+  <form id="editor" style="display:none;">
+
+    <div id="tab-hero" class="page active">
+      <div class="card">
+        <h2>Hero-Sektion</h2>
+        <div class="field"><label>Eyebrow</label><input name="hero.eyebrow" /></div>
+        <div class="field"><label>Überschrift (mit &lt;br&gt; für Zeilenumbrüche)</label><textarea class="tall" name="hero.headline"></textarea></div>
+        <div class="field"><label>Lead-Text</label><textarea class="tall" name="hero.lead"></textarea></div>
+        <div class="row">
+          <div class="field"><label>CTA Primary</label><input name="hero.cta_primary" /></div>
+          <div class="field"><label>CTA Secondary</label><input name="hero.cta_secondary" /></div>
+        </div>
+        <div class="field">
+          <label>Badges</label>
+          <div class="badge-input" id="hero-badges"></div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <input type="text" id="hero-badge-input" placeholder="Neues Badge" style="flex:1;padding:8px 14px;border:1px solid #d0d0d0;border-radius:6px;font-family:Inter;font-size:14px;" />
+            <button type="button" class="btn btn-outline btn-sm" onclick="addBadge('hero')">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-services" class="page">
+      <div class="card">
+        <h2>Leistungen</h2>
+        <div class="field"><label>Eyebrow</label><input name="services.eyebrow" /></div>
+        <div class="field"><label>Titel (HTML erlaubt)</label><textarea class="tall" name="services.title"></textarea></div>
+        <div class="field"><label>Beschreibung</label><textarea name="services.description"></textarea></div>
+        <div class="field">
+          <label>Leistungskarten</label>
+          <div id="services-items"></div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addService()">+ Leistung hinzufügen</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-stats" class="page">
+      <div class="card">
+        <h2>Statistiken</h2>
+        <div class="field"><label>Eyebrow</label><input name="stats.eyebrow" /></div>
+        <div class="field"><label>Titel (HTML erlaubt)</label><textarea class="tall" name="stats.title"></textarea></div>
+        <div class="field">
+          <label>Statistik-Einträge</label>
+          <div id="stats-items"></div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addStat()">+ Eintrag hinzufügen</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-process" class="page">
+      <div class="card">
+        <h2>Prozess</h2>
+        <div class="field"><label>Eyebrow</label><input name="process.eyebrow" /></div>
+        <div class="field"><label>Titel (HTML erlaubt)</label><textarea class="tall" name="process.title"></textarea></div>
+        <div class="field"><label>Beschreibung</label><textarea name="process.description"></textarea></div>
+        <div class="field">
+          <label>Prozess-Schritte</label>
+          <div id="process-items"></div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addStep()">+ Schritt hinzufügen</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-portfolios" class="page">
+      <div class="card">
+        <h2>Portfolio-Projekte</h2>
+        <div id="portfolio-items"></div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addPortfolio()">+ Projekt hinzufügen</button>
+      </div>
+    </div>
+
+    <div id="tab-contact" class="page">
+      <div class="card">
+        <h2>Kontakt</h2>
+        <div class="field"><label>Eyebrow</label><input name="contact.eyebrow" /></div>
+        <div class="field"><label>Titel (HTML erlaubt)</label><textarea class="tall" name="contact.title"></textarea></div>
+        <div class="field"><label>Beschreibung</label><textarea name="contact.description"></textarea></div>
+        <div class="row">
+          <div class="field"><label>Firmenname</label><input name="contact.company" /></div>
+          <div class="field"><label>E-Mail</label><input name="contact.email" /></div>
+        </div>
+        <div class="field"><label>Adresse (HTML erlaubt)</label><textarea name="contact.address"></textarea></div>
+        <div class="row">
+          <div class="field"><label>Telefon</label><input name="contact.phone" /></div>
+          <div class="field"><label>Öffnungszeiten (HTML erlaubt)</label><textarea name="contact.hours"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-footer" class="page">
+      <div class="card">
+        <h2>Footer</h2>
+        <div class="field"><label>Beschreibung</label><textarea class="tall" name="footer.description"></textarea></div>
+        <div class="field">
+          <label>Footer-Spalten</label>
+          <div id="footer-columns"></div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addFooterColumn()">+ Spalte hinzufügen</button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const REPO = 'kimdrabe/nordflag-landing';
+    const BRANCH = 'main';
+    let token = localStorage.getItem('nordflag_token') || '';
+    let data = {};
+
+    // --- Token ---
+    if (token) {
+      document.getElementById('token-bar').style.display = 'none';
+      document.getElementById('status-text').textContent = 'Verbunden ✓';
+    }
+
+    document.getElementById('token-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveToken(); });
+
+    function saveToken() {
+      const val = document.getElementById('token-input').value.trim();
+      if (!val) return;
+      token = val;
+      localStorage.setItem('nordflag_token', val);
+      document.getElementById('token-bar').style.display = 'none';
+      document.getElementById('status-text').textContent = 'Verbunden ✓';
+      loadAll();
+    }
+
+    // --- GitHub API ---
+    async function ghGet(path) {
+      const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error(`GET ${path}: ${res.status}`);
+      const body = await res.json();
+      return { content: atob(body.content.replace(/\n/g, '')), sha: body.sha };
+    }
+
+    async function ghPut(path, content, sha) {
+      const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        method: 'PUT',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `Update ${path}`,
+          content: btoa(unescape(encodeURIComponent(content))),
+          sha: sha || undefined,
+          branch: BRANCH
+        })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || `PUT ${path}: ${res.status}`);
+      }
+      return (await res.json()).content.sha;
+    }
+
+    // --- Data loading ---
+    async function loadJSON(path) {
+      const result = await ghGet(path);
+      if (!result) return null;
+      try { return { data: JSON.parse(result.content), sha: result.sha }; }
+      catch { return null; }
+    }
+
+    async function loadDir(path) {
+      const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (!res.ok) return [];
+      const items = await res.json();
+      return items.filter(i => i.name.endsWith('.json'));
+    }
+
+    const FILES = [
+      { key: 'hero', path: 'content/hero.json' },
+      { key: 'services', path: 'content/services.json' },
+      { key: 'stats', path: 'content/stats.json' },
+      { key: 'process', path: 'content/process.json' },
+      { key: 'contact', path: 'content/contact.json' },
+      { key: 'footer', path: 'content/footer.json' }
+    ];
+
+    async function loadAll() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('editor').style.display = 'none';
+      try {
+        for (const f of FILES) {
+          const result = await loadJSON(f.path);
+          data[f.key] = result ? result.data : {};
+          data[f.key + '_sha'] = result ? result.sha : null;
+        }
+
+        const dir = await loadDir('content/portfolios');
+        data.portfolios = [];
+        data.portfolios_sha = {};
+        for (const item of dir) {
+          const result = await loadJSON(`content/portfolios/${item.name}`);
+          if (result) {
+            data.portfolios.push({ ...result.data, _file: item.name });
+            data.portfolios_sha[item.name] = result.sha;
+          }
+        }
+
+        populateForm();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('editor').style.display = 'block';
+        toast('Alle Inhalte geladen ✓');
+      } catch (e) {
+        document.getElementById('loading').textContent = 'Fehler beim Laden: ' + e.message;
+      }
+    }
+
+    // --- Form population ---
+    function val(key) {
+      const parts = key.split('.');
+      let d = data;
+      for (const p of parts) {
+        if (d == null) return '';
+        d = d[p];
+      }
+      return d != null ? d : '';
+    }
+
+    function populateForm() {
+      // Hero
+      setVal('hero.eyebrow');
+      setVal('hero.headline');
+      setVal('hero.lead');
+      setVal('hero.cta_primary');
+      setVal('hero.cta_secondary');
+      renderBadges('hero');
+
+      // Services
+      setVal('services.eyebrow');
+      setVal('services.title');
+      setVal('services.description');
+      renderServices();
+
+      // Stats
+      setVal('stats.eyebrow');
+      setVal('stats.title');
+      renderStats();
+
+      // Process
+      setVal('process.eyebrow');
+      setVal('process.title');
+      setVal('process.description');
+      renderProcessSteps();
+
+      // Portfolios
+      renderPortfolios();
+
+      // Contact
+      setVal('contact.eyebrow');
+      setVal('contact.title');
+      setVal('contact.description');
+      setVal('contact.company');
+      setVal('contact.email');
+      setVal('contact.address');
+      setVal('contact.phone');
+      setVal('contact.hours');
+
+      // Footer
+      setVal('footer.description');
+      renderFooterColumns();
+    }
+
+    function setVal(key) {
+      const el = document.querySelector(`[name="${key}"]`);
+      if (el) el.value = val(key);
+    }
+
+    function collectVal(key) {
+      const el = document.querySelector(`[name="${key}"]`);
+      return el ? el.value : '';
+    }
+
+    function collectData(key) {
+      if (key === 'hero') {
+        return {
+          eyebrow: collectVal('hero.eyebrow'),
+          headline: collectVal('hero.headline'),
+          lead: collectVal('hero.lead'),
+          cta_primary: collectVal('hero.cta_primary'),
+          cta_secondary: collectVal('hero.cta_secondary'),
+          badges: data.hero ? data.hero.badges || [] : []
+        };
+      }
+      if (key === 'services') {
+        return {
+          eyebrow: collectVal('services.eyebrow'),
+          title: collectVal('services.title'),
+          description: collectVal('services.description'),
+          items: data.services ? data.services.items || [] : []
+        };
+      }
+      if (key === 'stats') {
+        return {
+          eyebrow: collectVal('stats.eyebrow'),
+          title: collectVal('stats.title'),
+          items: data.stats ? data.stats.items || [] : []
+        };
+      }
+      if (key === 'process') {
+        return {
+          eyebrow: collectVal('process.eyebrow'),
+          title: collectVal('process.title'),
+          description: collectVal('process.description'),
+          steps: data.process ? data.process.steps || [] : []
+        };
+      }
+      if (key === 'contact') {
+        return {
+          eyebrow: collectVal('contact.eyebrow'),
+          title: collectVal('contact.title'),
+          description: collectVal('contact.description'),
+          company: collectVal('contact.company'),
+          email: collectVal('contact.email'),
+          address: collectVal('contact.address'),
+          phone: collectVal('contact.phone'),
+          hours: collectVal('contact.hours')
+        };
+      }
+      if (key === 'footer') {
+        return {
+          description: collectVal('footer.description'),
+          columns: data.footer ? data.footer.columns || [] : []
+        };
+      }
+      return {};
+    }
+
+    // --- Badges ---
+    function renderBadges(section) {
+      const container = document.getElementById(`${section}-badges`);
+      const items = data[section] ? data[section].badges || [] : [];
+      container.innerHTML = items.map((b, i) =>
+        `<span class="badge-tag">${b} <button type="button" onclick="removeBadge('${section}', ${i})">×</button></span>`
+      ).join('');
+    }
+
+    function addBadge(section) {
+      const input = document.getElementById(`${section}-badge-input`);
+      const val = input.value.trim();
+      if (!val) return;
+      if (!data[section]) data[section] = {};
+      if (!data[section].badges) data[section].badges = [];
+      data[section].badges.push(val);
+      input.value = '';
+      renderBadges(section);
+    }
+
+    function removeBadge(section, i) {
+      data[section].badges.splice(i, 1);
+      renderBadges(section);
+    }
+
+    // --- Services ---
+    function renderServices() {
+      const items = data.services ? data.services.items || [] : [];
+      document.getElementById('services-items').innerHTML = items.map((item, i) => `
+        <div class="item-card">
+          <div class="row">
+            <div class="field"><label>Icon</label><input value="${esc(item.icon)}" onchange="editService(${i},'icon',this.value)" /></div>
+            <div class="field"><label>Titel</label><input value="${esc(item.title)}" onchange="editService(${i},'title',this.value)" /></div>
+          </div>
+          <div class="field"><label>Beschreibung</label><textarea onchange="editService(${i},'description',this.value)">${esc(item.description)}</textarea></div>
+          <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removeService(${i})">Löschen</button></div>
+        </div>
+      `).join('');
+    }
+
+    function editService(i, field, value) {
+      data.services.items[i][field] = value;
+    }
+
+    function addService() {
+      if (!data.services) data.services = {};
+      if (!data.services.items) data.services.items = [];
+      data.services.items.push({ icon: '', title: '', description: '' });
+      renderServices();
+    }
+
+    function removeService(i) {
+      data.services.items.splice(i, 1);
+      renderServices();
+    }
+
+    // --- Stats ---
+    function renderStats() {
+      const items = data.stats ? data.stats.items || [] : [];
+      document.getElementById('stats-items').innerHTML = items.map((item, i) => `
+        <div class="item-card">
+          <div class="row">
+            <div class="field"><label>Zahl</label><input value="${esc(item.number)}" onchange="editStat(${i},'number',this.value)" /></div>
+            <div class="field"><label>Label</label><input value="${esc(item.label)}" onchange="editStat(${i},'label',this.value)" /></div>
+          </div>
+          <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removeStat(${i})">Löschen</button></div>
+        </div>
+      `).join('');
+    }
+
+    function editStat(i, field, value) { data.stats.items[i][field] = value; }
+    function addStat() {
+      if (!data.stats) data.stats = {};
+      if (!data.stats.items) data.stats.items = [];
+      data.stats.items.push({ number: '', label: '' });
+      renderStats();
+    }
+    function removeStat(i) { data.stats.items.splice(i, 1); renderStats(); }
+
+    // --- Process ---
+    function renderProcessSteps() {
+      const steps = data.process ? data.process.steps || [] : [];
+      document.getElementById('process-items').innerHTML = steps.map((step, i) => `
+        <div class="item-card">
+          <div class="field"><label>Titel</label><input value="${esc(step.title)}" onchange="editStep(${i},'title',this.value)" /></div>
+          <div class="field"><label>Beschreibung</label><textarea onchange="editStep(${i},'description',this.value)">${esc(step.description)}</textarea></div>
+          <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removeStep(${i})">Löschen</button></div>
+        </div>
+      `).join('');
+    }
+
+    function editStep(i, field, value) { data.process.steps[i][field] = value; }
+    function addStep() {
+      if (!data.process) data.process = {};
+      if (!data.process.steps) data.process.steps = [];
+      data.process.steps.push({ title: '', description: '' });
+      renderProcessSteps();
+    }
+    function removeStep(i) { data.process.steps.splice(i, 1); renderProcessSteps(); }
+
+    // --- Portfolio ---
+    function renderPortfolios() {
+      const items = data.portfolios || [];
+      document.getElementById('portfolio-items').innerHTML = items.map((item, i) => `
+        <div class="item-card">
+          <div class="field"><label>Titel</label><input value="${esc(item.title)}" onchange="editPortfolio(${i},'title',this.value)" /></div>
+          <div class="field"><label>Beschreibung</label><textarea onchange="editPortfolio(${i},'description',this.value)">${esc(item.description)}</textarea></div>
+          <div class="field">
+            <label>Tags (kommagetrennt)</label>
+            <input value="${esc((item.tags || []).join(', '))}" onchange="editPortfolioTags(${i},this.value)" />
+          </div>
+          <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removePortfolio(${i})">Löschen</button></div>
+        </div>
+      `).join('');
+    }
+
+    function editPortfolio(i, field, value) { data.portfolios[i][field] = value; }
+    function editPortfolioTags(i, value) {
+      data.portfolios[i].tags = value.split(',').map(t => t.trim()).filter(Boolean);
+    }
+
+    function addPortfolio() {
+      data.portfolios.push({ title: '', description: '', tags: [], _file: null });
+      renderPortfolios();
+    }
+
+    function removePortfolio(i) {
+      data.portfolios[i]._deleted = true;
+      renderPortfolios();
+    }
+
+    // --- Footer Columns ---
+    function renderFooterColumns() {
+      const cols = data.footer ? data.footer.columns || [] : [];
+      document.getElementById('footer-columns').innerHTML = cols.map((col, i) => `
+        <div class="item-card">
+          <div class="field"><label>Spalten-Überschrift</label><input value="${esc(col.heading)}" onchange="editFooterCol(${i},'heading',this.value)" /></div>
+          <div class="field">
+            <label>Links (kommagetrennt, Format: Text=URL)</label>
+            <input value="${esc((col.links || []).map(l => `${l.label}=${l.url}`).join(', '))}" onchange="editFooterLinks(${i},this.value)" />
+          </div>
+          <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removeFooterCol(${i})">Löschen</button></div>
+        </div>
+      `).join('');
+    }
+
+    function editFooterCol(i, field, value) { data.footer.columns[i][field] = value; }
+    function editFooterLinks(i, value) {
+      data.footer.columns[i].links = value.split(',').map(pair => {
+        const parts = pair.trim().split('=');
+        return parts.length === 2 ? { label: parts[0].trim(), url: parts[1].trim() } : null;
+      }).filter(Boolean);
+    }
+    function addFooterColumn() {
+      if (!data.footer) data.footer = {};
+      if (!data.footer.columns) data.footer.columns = [];
+      data.footer.columns.push({ heading: '', links: [] });
+      renderFooterColumns();
+    }
+    function removeFooterCol(i) { data.footer.columns.splice(i, 1); renderFooterColumns(); }
+
+    // --- Save ---
+    async function saveAll() {
+      if (!token) { toast('Bitte zuerst Token eingeben!'); return; }
+
+      document.getElementById('status-text').textContent = 'Speichere ...';
+      const btn = document.querySelector('.header-bar .btn-primary');
+      btn.textContent = 'Speichere ...';
+      btn.disabled = true;
+
+      try {
+        const updates = FILES.map(f => ({
+          path: f.path,
+          content: JSON.stringify(collectData(f.key), null, 2),
+          sha: data[f.key + '_sha']
+        }));
+
+        // Portfolios
+        for (let i = 0; i < data.portfolios.length; i++) {
+          const p = data.portfolios[i];
+          if (p._deleted && p._file) {
+            await ghDelete(`content/portfolios/${p._file}`, data.portfolios_sha[p._file]);
+            continue;
+          }
+          const fileName = p._file || (p.title ? p.title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '.json' : `project-${Date.now()}.json`);
+          const content = JSON.stringify({ title: p.title, description: p.description, tags: p.tags || [] }, null, 2);
+          updates.push({ path: `content/portfolios/${fileName}`, content, sha: data.portfolios_sha[fileName] || null });
+        }
+
+        for (const u of updates) {
+          const newSha = await ghPut(u.path, u.content, u.sha);
+          const key = u.path.replace('content/', '').replace('.json', '');
+          if (key.includes('portfolios/')) {
+            data.portfolios_sha[key.replace('portfolios/', '')] = newSha;
+          } else {
+            data[key + '_sha'] = newSha;
+          }
+        }
+
+        toast('Alle Änderungen gespeichert ✓');
+        await loadAll(); // reload to sync
+      } catch (e) {
+        toast('Fehler: ' + e.message);
+      }
+
+      document.getElementById('status-text').textContent = 'Verbunden ✓';
+      btn.textContent = 'Alles speichern';
+      btn.disabled = false;
+    }
+
+    async function ghDelete(path, sha) {
+      await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        method: 'DELETE',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Delete ${path}`, sha, branch: BRANCH })
+      });
+    }
+
+    // --- Tab switching ---
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // --- Toast ---
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    function esc(s) {
+      if (!s) return '';
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // --- Init ---
+    if (token) loadAll();
+  </script>
+
 </body>
 </html>
