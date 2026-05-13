@@ -64,7 +64,6 @@
       --card-soft: #f2f2f2;
     }
     body.dark {
-      --ink: #f2f2f2;
       --body: #b0b0b0;
       --mute: #666;
       --canvas: #1a1a1a;
@@ -77,6 +76,10 @@
       --card-bg: #2a2a2a;
       --card-soft: #333;
     }
+    body:not(.dark) .hero { background: var(--ink); color: var(--on-dark); }
+    body.dark .hero { background: var(--ink); color: var(--on-dark); }
+    body:not(.dark) .theme-toggle { border-color: rgba(255,255,255,0.3); }
+    body.dark .hero .btn-outline-light { border-color: rgba(255,255,255,0.5); }
     body.dark .band-light { background: #1a1a1a; }
     body.dark .band-soft { background: #2a2a2a; }
     body.dark .service-card { background: #2a2a2a; }
