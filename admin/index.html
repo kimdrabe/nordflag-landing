@@ -482,7 +482,7 @@
       const container = document.getElementById(`${section}-badges`);
       const items = data[section] ? data[section].badges || [] : [];
       container.innerHTML = items.map((b, i) =>
-        `<span class="badge-tag">${b} <button type="button" onclick="removeBadge('${section}', ${i})">×</button></span>`
+        `<span class="badge-tag">${esc(b)} <button type="button" onclick="removeBadge('${section}', ${i})">x</button></span>`
       ).join('');
     }
 
@@ -498,6 +498,7 @@
     }
 
     function removeBadge(section, i) {
+      if (!data[section] || !Array.isArray(data[section].badges)) return;
       data[section].badges.splice(i, 1);
       renderBadges(section);
     }
