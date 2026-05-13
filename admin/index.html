@@ -146,13 +146,15 @@
             <button type="button" class="btn btn-outline btn-sm" onclick="addBadge('hero')">+</button>
           </div>
         </div>
-        <div class="field">
-          <label>Hero-Bild (rechte Seite, JPG/PNG/WebP, max 2 MB)</label>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadHeroImage(this)" style="font-size:14px;" />
-            <span style="font-size:13px;color:var(--body);" id="hero-img-status">Kein Bild</span>
+          <div class="field">
+            <label>Hero-Bild (rechte Seite, JPG/PNG/WebP, max 2 MB)</label>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadHeroImage(this)" style="font-size:14px;" />
+              <span style="font-size:13px;color:var(--body);" id="hero-img-status">Kein Bild</span>
+              <button type="button" class="btn btn-danger btn-sm" onclick="deleteHeroImage()" id="hero-img-del" style="${data.hero && data.hero.image ? '' : 'display:none;'}">Bild löschen</button>
+            </div>
+            ${data.hero && data.hero.image ? `<div style="margin-top:6px;position:relative;display:inline-block;"><img src="https://raw.githubusercontent.com/${REPO}/main/images/${esc(data.hero.image)}" style="max-height:100px;border-radius:6px;" onerror="this.style.display='none'" id="hero-img-preview" /></div>` : '<div id="hero-img-preview"></div>'}
           </div>
-        </div>
       </div>
     </div>
 
@@ -379,7 +381,11 @@
       setVal('hero.cta_secondary');
       renderBadges('hero');
       const heroImg = data.hero && data.hero.image;
-      if (heroImg) document.getElementById('hero-img-status').textContent = heroImg;
+      if (heroImg) {
+        document.getElementById('hero-img-status').textContent = heroImg;
+        document.getElementById('hero-img-del').style.display = '';
+        document.getElementById('hero-img-preview').outerHTML = '<div style="margin-top:6px;position:relative;display:inline-block;"><img src="https://raw.githubusercontent.com/' + REPO + '/main/images/' + esc(heroImg) + '" style="max-height:100px;border-radius:6px;" id="hero-img-preview" /></div>';
+      }
 
       // Services
       setVal('services.eyebrow');
@@ -605,12 +611,15 @@
           </div>
           <div class="field"><label>Link (z.B. https://example.com)</label><input value="${esc(item.link || '')}" onchange="editPortfolio(${i},'link',this.value)" placeholder="https://..." /></div>
           <div class="field">
-            <label>Bild (JPG/PNG, max 2 MB)</label>
+            <label>Bild (JPG/PNG/WebP, max 2 MB)</label>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
               <input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadPortfolioImage(${i},this)" style="font-size:14px;" />
               <span style="font-size:13px;color:var(--body);" id="img-status-${i}">${item.image ? esc(item.image) : 'Kein Bild'}</span>
+              <button type="button" class="btn btn-danger btn-sm" onclick="deletePortfolioImage(${i})" ${item.image ? '' : 'style="display:none;"'} id="img-del-${i}">Bild löschen</button>
             </div>
-            ${item.image ? `<div style="margin-top:6px;"><img src="https://raw.githubusercontent.com/${REPO}/main/images/${esc(item.image)}" style="max-height:80px;border-radius:4px;" onerror="this.style.display='none'" /></div>` : ''}
+            <div style="margin-top:6px;${item.image ? '' : 'display:none;'}" id="img-preview-${i}">
+              <img src="https://raw.githubusercontent.com/${REPO}/main/images/${esc(item.image)}" style="max-height:80px;border-radius:4px;" onerror="document.getElementById('img-preview-${i}').style.display='none'" />
+            </div>
           </div>
           <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removePortfolio(${i})">Löschen</button></div>
         </div>
@@ -661,10 +670,34 @@
         data.hero.image = safeName;
         statusEl.textContent = safeName;
         toast('Hero-Bild hochgeladen ✓');
+        document.getElementById('hero-img-del').style.display = '';
+        document.getElementById('hero-img-preview').outerHTML = `<img src="https://raw.githubusercontent.com/${REPO}/main/images/${esc(safeName)}" style="max-height:100px;border-radius:6px;" id="hero-img-preview" />`;
       } catch (e) {
         statusEl.textContent = 'Fehler: ' + e.message;
         input.value = '';
       }
+    }
+
+    async function deleteHeroImage() {
+      if (!data.hero || !data.hero.image) return;
+      if (!confirm('Hero-Bild wirklich löschen?')) return;
+      try {
+        const path = 'images/' + data.hero.image;
+        const current = await ghGet(path);
+        if (current) {
+          const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+            method: 'DELETE',
+            headers: { Authorization: 'token ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'Delete ' + path, sha: current.sha, branch: BRANCH })
+          });
+          if (!res.ok) { let m = 'Fehler'; try { m = (await res.json()).message; } catch {} throw new Error(m); }
+        }
+        data.hero.image = '';
+        document.getElementById('hero-img-status').textContent = 'Kein Bild';
+        document.getElementById('hero-img-del').style.display = 'none';
+        document.getElementById('hero-img-preview').outerHTML = '<div id="hero-img-preview"></div>';
+        toast('Hero-Bild gelöscht ✓');
+      } catch (e) { toast('Fehler: ' + e.message); }
     }
 
     async function uploadPortfolioImage(i, input) {
@@ -706,6 +739,28 @@
         statusEl.textContent = 'Fehler: ' + e.message;
         input.value = '';
       }
+    }
+
+    async function deletePortfolioImage(i) {
+      if (!data.portfolios[i] || !data.portfolios[i].image) return;
+      if (!confirm('Bild wirklich löschen?')) return;
+      try {
+        const path = 'images/' + data.portfolios[i].image;
+        const current = await ghGet(path);
+        if (current) {
+          const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+            method: 'DELETE',
+            headers: { Authorization: 'token ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'Delete ' + path, sha: current.sha, branch: BRANCH })
+          });
+          if (!res.ok) { let m = 'Fehler'; try { m = (await res.json()).message; } catch {} throw new Error(m); }
+        }
+        data.portfolios[i].image = '';
+        document.getElementById('img-status-' + i).textContent = 'Kein Bild';
+        document.getElementById('img-del-' + i).style.display = 'none';
+        document.getElementById('img-preview-' + i).style.display = 'none';
+        toast('Bild gelöscht ✓');
+      } catch (e) { toast('Fehler: ' + e.message); }
     }
 
     // --- Footer Columns ---
