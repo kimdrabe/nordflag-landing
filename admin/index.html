@@ -678,7 +678,9 @@
         data.portfolios = keepPortfolios;
 
         for (const u of updates) {
-          const newSha = await ghPut(u.path, u.content, u.sha);
+          const fresh = await ghGet(u.path);
+          const freshSha = fresh ? fresh.sha : null;
+          const newSha = await ghPut(u.path, u.content, freshSha);
           if (u._file) {
             data.portfolios_sha[u._file] = newSha;
           } else {
