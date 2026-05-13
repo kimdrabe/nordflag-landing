@@ -473,7 +473,8 @@
         return (data.portfolios || []).filter(p => !p._deleted).map(p => ({
           title: p.title,
           description: p.description,
-          tags: p.tags || []
+          tags: p.tags || [],
+          image: p.image || ''
         }));
       }
       return {};
@@ -591,6 +592,14 @@
             <label>Tags (kommagetrennt)</label>
             <input value="${esc((item.tags || []).join(', '))}" onchange="editPortfolioTags(${i},this.value)" />
           </div>
+          <div class="field">
+            <label>Bild (JPG/PNG, max 2 MB)</label>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadPortfolioImage(${i},this)" style="font-size:14px;" />
+              <span style="font-size:13px;color:var(--body);" id="img-status-${i}">${item.image ? esc(item.image) : 'Kein Bild'}</span>
+            </div>
+            ${item.image ? `<div style="margin-top:6px;"><img src="https://raw.githubusercontent.com/${REPO}/main/images/${esc(item.image)}" style="max-height:80px;border-radius:4px;" onerror="this.style.display='none'" /></div>` : ''}
+          </div>
           <div class="actions"><button type="button" class="btn btn-danger btn-sm" onclick="removePortfolio(${i})">Löschen</button></div>
         </div>
       `).join('');
@@ -602,13 +611,54 @@
     }
 
     function addPortfolio() {
-      data.portfolios.push({ title: '', description: '', tags: [], _file: null });
+      data.portfolios.push({ title: '', description: '', tags: [], image: '' });
       renderPortfolios();
     }
 
     function removePortfolio(i) {
       data.portfolios[i]._deleted = true;
       renderPortfolios();
+    }
+
+    async function uploadPortfolioImage(i, input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { toast('Bild zu groß (max 2 MB)'); input.value = ''; return; }
+
+      const statusEl = document.getElementById('img-status-' + i);
+      statusEl.textContent = 'Lade hoch ...';
+
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/, '');
+        const safeName = (data.portfolios[i].title || 'project-' + i).toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '.' + ext;
+        const path = 'images/' + safeName;
+
+        const current = await ghGet(path);
+        const body = { message: 'Upload ' + path, content: base64, branch: BRANCH };
+        if (current) body.sha = current.sha;
+
+        const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+          method: 'PUT',
+          headers: { Authorization: 'token ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) { let m = 'Fehler'; try { m = (await res.json()).message; } catch {} throw new Error(m); }
+
+        data.portfolios[i].image = safeName;
+        statusEl.textContent = safeName;
+        toast('Bild hochgeladen ✓');
+        renderPortfolios();
+      } catch (e) {
+        statusEl.textContent = 'Fehler: ' + e.message;
+        input.value = '';
+      }
     }
 
     // --- Footer Columns ---
